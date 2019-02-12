@@ -22,9 +22,7 @@ export class AddtaskComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    
   }
-
   onaddtaskSubmit() {
     const task = {
       taskId: this.taskId,
@@ -33,7 +31,7 @@ export class AddtaskComponent implements OnInit {
   taskHandler: this.taskHandler,
   taskClientName : this.taskClientName
     }
-
+    console.log("In add task" + task);
    this.authService.addtask(task).subscribe(data => {
       if(data.success) {
         console.log("success");

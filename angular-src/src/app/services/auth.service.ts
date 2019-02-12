@@ -53,9 +53,6 @@ export class AuthService {
       .map(res => res.json());
   }
   
- 
-
-
   prepEndpoint(ep){
     if(this.isDev){
       return ep;
@@ -63,8 +60,6 @@ export class AuthService {
       return 'http://localhost:8080/'+ep;
     }
   }
-
-
   storeUserData(token, user) {
     localStorage.setItem('id_token', token);
     localStorage.setItem('user', JSON.stringify(user));
@@ -88,6 +83,7 @@ export class AuthService {
   }
   
   addtask(task) {
+    console.log("add task auth service " + JSON.stringify(task));
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     return this.http.post('http://localhost:8080/user/addtask', task, {headers: headers})
@@ -102,17 +98,11 @@ export class AuthService {
       .map(res => res.json());
   }
 
-  // updateTask(task_id,task) {
-  //   let headers = new Headers();
-  //   headers.append('Content-Type', 'application/json');
-  //   return this.http.put('http://localhost:8080/user/updateTask/', +task_id+task, {headers: headers})
-  //     .map(res => res.json());
-
-  // }
-
   updateTask(id, info){
-    console.log("update task auth service " + id);
-    return this.http.put('http://localhost:8080/user/'+id,info)
+    let headers = new Headers();
+    console.log("update task auth service " +  JSON.stringify(info));
+    var infoo = info[0];
+    return this.http.put('http://localhost:8080/user/'+id, infoo,{headers: headers})
         .map(res => res.json());
   }
   
@@ -125,7 +115,7 @@ export class AuthService {
   } 
 
   detailtask(task_id) {
-    console.log("this is task Id" + task_id);
+   
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     return this.http.get('http://localhost:8080/user/find/' +task_id, {headers: headers})

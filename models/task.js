@@ -36,7 +36,7 @@ const Task=module.exports=mongoose.model('Task',TaskSchema);
 module.exports.addTask= function(newTask, callback)
 {
     newTask.save(callback);   
-    console.log("added");
+    console.log("added" + newTask);
 }
 
 
@@ -46,7 +46,6 @@ module.exports.getTask = function(callback){
 
 module.exports.updateTask = function(id, newTask, callback){
     Task.findByIdAndUpdate(id, newTask, callback);
+      //console.log("In model " +  JSON.stringify(newTask));
+   
 }
-// module.exports.deletetask = function(id, callback){
-//     Task.findByIdAndRemove(id, callback);
-// }

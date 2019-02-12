@@ -14,6 +14,7 @@ const Membership = require('../models/fb');
 const God= require('../models/google');
 const cookieSession=require('cookie-session');
 
+
 // var passport = require('passport')
 //   , FacebookStrategy = require('passport-facebook').Strategy;
 //   passport.serializeUser(function (user, done) {
@@ -310,6 +311,7 @@ router.post('/addtask', (req, res, next) => {
     taskHandler: req.body.taskHandler,
     taskClientName: req.body.taskClientName
   });
+   console.log("new task " + newTask);
   Task.addTask(newTask, (err, Task) => {
     if (err) {
       res.json({ success: false, msg: ' Failed to Add Task' });
@@ -320,37 +322,6 @@ router.post('/addtask', (req, res, next) => {
   });
 });
 
-
-//  router.get('/showtask',function(req,res)
-//  {  
-//     Task.find({},function(err,alltask)
-//  {
-//     if(err)
-//      {
-//          console.log("error");
-//      }
-//      else {
-//       console.log(alltask);
-
-//          res.json({task: JSON.stringify(alltask)});     
-//      } 
-//  }
-//  );     
-//  });
-// router.get('/showtask', function(req, res) {
-//   Task.find({}, function(err, tasks) {
-//     var taskMap = {};
-
-//     tasks.forEach(function(task) {
-//       taskMap[task._id] = task;
-
-//     });
-//    // console.log(taskMap);
-//     res.json({task: taskMap});
-
-//   });
-// });
-
 router.get('/showtask', function (req, res) {
   Task.getTask(function (err, tasks) {
     if (err) throw err;
@@ -358,50 +329,22 @@ router.get('/showtask', function (req, res) {
     console.log("show working");
   });
 });
-
-//UPDATE Task
-// router.put('/updateTask/:id', function(req, res, next){
-//   console.log("in update route");
-//   Task.findById(req.params.id, function (err, task) {
-//       if (!task) {
-//           console.log('error', 'No task found');
-//           return res.redirect('/updateTask/:id');
-//       }
-//       console.log('task found');
-//       var taskId = req.body.taskId;
-//       var taskName = req.body.taskName;
-//       var taskHandler= req.body.taskHandler;
-//       var taskClientName = req.body.taskClientName;
-//       var taskDesc=req.body.taskDesc;
-
-//       task.taskId = taskId;
-//       task.taskClientName = taskClientName;
-//       task.taskName = taskName;
-//       task.taskHandler= taskHandler;
-//       task.taskDesc=taskDesc;
-
-//       task.save();
-//       console.log("updated Task");
-//       res.redirect('/updateTask/:id');
-//     });
-//   });
-
-
-router.put('/:_id', function (req, res) {
-  var update =
-    {
-
-      taskName: req.body.taskName,
-      taskClientName: req.body.taskClientName,
-      taskHandler: req.body.taskHandler,
-      taskDesc: req.body.taskDesc
-    }
+router.put('/:_id', function(req, res){
+  var update = 
+  {
+    taskId: req.body.taskId,
+    taskName:req.body.taskName,
+    taskClientName:req.body.taskClientName,
+    taskHandler:req.body.taskHandler,
+    taskDesc:req.body.taskDesc
+  }
+  console.log(update);
   console.log("router put working");
-  Task.updateTask(req.params._id, update, function (err, task) {
-    if (err) throw err;
-    res.json(task);
-  });
-});
+  Task.updateTask(req.params._id,update,function(err,task){
+       if(err) throw err;
+       res.json(task);
+   });
+ });
 //DELETE ROUTE
 router.delete("/:id", function (req, res) {
   Task.findByIdAndRemove(req.params.id, function (err) {
@@ -424,7 +367,7 @@ router.get('/find/:_id', function (req, res) {
       console.log(err);
     }
     else {
-      console.log(tasks);
+        console.log("In find route " + tasks);
       return res.json(tasks);
       // res.json({tasks: tasks});
     }
