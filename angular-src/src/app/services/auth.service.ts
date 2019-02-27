@@ -43,6 +43,18 @@ export class AuthService {
       .map(res => res.json());
   }
 
+  // searchUser(search)
+  // {
+  //   console.log("In search user");
+  //   let headers = new Headers();
+  //   headers.append('Content-Type', 'application/json');
+  //   return this.http.get('http://localhost:8080/user/showtask/' +search, {headers: headers})
+  //     .map(res => res.json());
+  // }
+
+
+      
+
  getProfile() {
     let headers = new Headers();
     this.loadToken();
@@ -85,17 +97,30 @@ export class AuthService {
   addtask(task) {
     console.log("add task auth service " + JSON.stringify(task));
     let headers = new Headers();
+    
     headers.append('Content-Type', 'application/json');
     return this.http.post('http://localhost:8080/user/addtask', task, {headers: headers})
       .map(res => res.json());
   }
 
-  getTask() {
+  // getTask() {
+  //   let headers = new Headers();
+  //   headers.append('Content-Type', 'application/json');
+  //     let ep = this.prepEndpoint('user/showtask');
+  //      return this.http.get(ep,{headers: headers})
+  //     .map(res => res.json());
+  // }
+
+
+  getTask(user) {
+    console.log("In auth service " + user);
     let headers = new Headers();
+    headers.append('Authorization', user);
     headers.append('Content-Type', 'application/json');
-      let ep = this.prepEndpoint('user/showtask');
-       return this.http.get(ep,{headers: headers})
-      .map(res => res.json());
+      return this.http.get('http://localhost:8080/user/showtask',{headers: headers})
+        .map(res => res.json());
+
+
   }
 
   updateTask(id, info){

@@ -4,10 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import {RouterModule, Routes} from '@angular/router';
 
-
-
-
-
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { LoginComponent } from './components/login/login.component';
@@ -28,6 +24,8 @@ import { ShowtaskComponent } from './components/showtask/showtask.component';
 import { UpdateTaskComponent } from './components/update-task/update-task.component';
 import { EdittaskComponent } from './components/edittask/edittask.component';
 import { DetailtaskComponent } from './components/detailtask/detailtask.component';
+import { UploadprofileComponent } from './components/uploadprofile/uploadprofile.component';
+import { SearchComponent } from './components/search/search.component';
 
 
 
@@ -36,15 +34,15 @@ const appRoutes: Routes =  [
   //{path:'home', component: HomeComponent},
   {path:'register', component: RegisterComponent},
   {path:'login', component: LoginComponent},
-  {path:'dashboard', component: DashboardComponent,
-   canActivate:[AuthGuard]},
+  {path:'dashboard', component: DashboardComponent, canActivate:[AuthGuard]},
   {path:'profile', component: ProfileComponent, canActivate:[AuthGuard]},
   {path:'forgotpassword', component: ForgotpasswordComponent},
   {path:'resetpassword', component: ResetpasswordComponent},
   {path:'addtask', component: AddtaskComponent,canActivate:[AuthGuard]},
   {path:'showtask', component: ShowtaskComponent, canActivate:[AuthGuard]},
   {path: 'edittask/:_id',component: EdittaskComponent,canActivate:[AuthGuard]},
-  {path: 'detailtask/:_id',component: DetailtaskComponent,canActivate:[AuthGuard]}
+  {path: 'detailtask/:_id',component: DetailtaskComponent,canActivate:[AuthGuard]},
+  {path:'search',component: SearchComponent}
 ]
 
 @NgModule({
@@ -63,7 +61,9 @@ const appRoutes: Routes =  [
     ShowtaskComponent,
     UpdateTaskComponent,
     EdittaskComponent,
-    DetailtaskComponent
+    DetailtaskComponent,
+    UploadprofileComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,

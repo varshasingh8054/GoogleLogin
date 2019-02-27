@@ -9,6 +9,8 @@ const config = require('./config/database');
 var GoogleStrategy = require('passport-google-oauth2').Strategy;
 const cookieSession=require('cookie-session');
 const app=express();
+const multer = require('multer');
+global.APP_PATH = __dirname;
 //mongoose.connect(config.database);
 //mongoose.connect(config.database,{ useNewUrlParser: true });
 mongoose.connect(config.database,{ useNewUrlParser: true }).then(() => {

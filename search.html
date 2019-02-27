@@ -1,0 +1,28 @@
+
+<table class="table table-bordered ">
+    <thead>
+    <tr>
+        <th class="text-center">Name</th>
+        <th class="text-center">taskClientName</th>
+        <th class="text-center">Email</th>
+        <th class="text-center">Phone</th>
+        <!-- <th class="text-center">Option</th> -->
+    </tr>
+
+    </thead>
+    <tbody>
+    {% for task in tasks %}
+    <tr >
+
+        <td class="text-center">{{task[0].taskName}}</td>
+        <td class="text-center">{{task[0].taskClientName}}</td>
+        <td class="text-center">{{task[0].taskName}}</td>
+        <td class="text-center">{{task[0].taskName}}</td>
+       <td><center> <!-- <a href = "http://localhost:3000/customers/{{customer.id}}/edit" class="btn btn-info"><span class="glyphicon glyphicon-pencil"></span>&nbsp;&nbsp;Edit&nbsp;&nbsp;</a>
+            <a href = "http://localhost:3000/customers/{{customer.id}}" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</a> --> </center></td>
+
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+

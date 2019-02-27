@@ -44,7 +44,8 @@ import { Task} from '../../taskmodel';
   styleUrls: ['./edittask.component.css']
 })
 export class EdittaskComponent implements OnInit {
-  @Input() task: Task;
+  // @Input() task: Task;
+  task : Object;
   constructor(private authService:AuthService,  private route : ActivatedRoute,private router:Router,  private flashMessage: FlashMessagesService) {
     
    }

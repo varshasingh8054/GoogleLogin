@@ -11,8 +11,57 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 const Membership = require('../models/fb');
-const God= require('../models/google');
-const cookieSession=require('cookie-session');
+const God = require('../models/google');
+const cookieSession = require('cookie-session');
+const multer = require('multer');
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, APP_PATH + '/destination');
+    console.log(APP_PATH + '/destination');
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+if (typeof localStorage === "undefined" || localStorage === null) {
+  var LocalStorage = require('node-localstorage').LocalStorage;
+  localStorage = new LocalStorage('./mylocalStor');
+}
+var upload = multer({ storage: storage });
+
+router.post('/uploadfile', upload.single("images"), (req, res, next) => {
+  const file = req.file
+  if (!file) {
+    const error = new Error('Please upload a file')
+    error.httpStatusCode = 400
+    return next(error)
+  }
+  res.send(file);
+
+
+})
+
+
+// router.post('/uploadphoto', upload.single('picture'), (req, res) => {
+//   var img = fs.readFileSync(req.file.path);
+// var encode_image = img.toString('base64');
+// // Define a JSONobject for the image attributes for saving to database
+
+// var finalImg = {
+//     contentType: req.file.mimetype,
+//     image:  new Buffer(encode_image, 'base64')
+//  };
+// db.collection('quotes').insertOne(finalImg, (err, result) => {
+//   console.log(result)
+
+//   if (err) return console.log(err)
+
+//   console.log('saved to database')
+//   res.redirect('/')
+
+
+// })
+// })
 
 
 // var passport = require('passport')
@@ -80,6 +129,7 @@ router.post('/register', (req, res, next) => {
     email: req.body.email,
     username: req.body.username,
     password: req.body.password,
+    profilephoto: req.body.profilephoto,
     token: token,
     active: false,
     resetPasswordToken: '',
@@ -311,7 +361,7 @@ router.post('/addtask', (req, res, next) => {
     taskHandler: req.body.taskHandler,
     taskClientName: req.body.taskClientName
   });
-   console.log("new task " + newTask);
+  console.log("new task " + newTask);
   Task.addTask(newTask, (err, Task) => {
     if (err) {
       res.json({ success: false, msg: ' Failed to Add Task' });
@@ -323,28 +373,66 @@ router.post('/addtask', (req, res, next) => {
 });
 
 router.get('/showtask', function (req, res) {
+  // let query = {};
+  //  console.log(req.query.search);
+  //   console.log(query);
+ 
+  // if (req.query.search) {
+  //   query = {
+  //     "$or": [
+  //       { taskName: { '$regex': req.query.search } },
+  //       { taskClientName: { '$regex': req.query.search } },
+  //       { taskDesc: { '$regex': req.query.search } }
+  //     ]
+  //   };
+  // }
+  // Task.getTask(query, function (err, tasks) {
+  //   if (err) throw err;
+  //   res.json(tasks);
+  //   console.log("show working");
+  // });
+  let query = {};
+  let search=req.headers.authorization; 
+  if (search) {
+    Task.find({
+          "$or": [
+            { taskName: { '$regex': search, $options: 'i' } },
+            { taskClientName: { '$regex': search, $options: 'i' } },
+            { taskDesc: { '$regex': search , $options: 'i'} }
+          ]
+        }, function (err, tasks) {
+          console.log(tasks);
+          return res.json(tasks);
+        });
+  }
+  else
+  {
   Task.getTask(function (err, tasks) {
     if (err) throw err;
+    console.log(tasks);
     res.json(tasks);
     console.log("show working");
   });
-});
-router.put('/:_id', function(req, res){
-  var update = 
-  {
-    taskId: req.body.taskId,
-    taskName:req.body.taskName,
-    taskClientName:req.body.taskClientName,
-    taskHandler:req.body.taskHandler,
-    taskDesc:req.body.taskDesc
   }
+});
+
+
+router.put('/:_id', function (req, res) {
+  var update =
+    {
+      taskId: req.body.taskId,
+      taskName: req.body.taskName,
+      taskClientName: req.body.taskClientName,
+      taskHandler: req.body.taskHandler,
+      taskDesc: req.body.taskDesc
+    }
   console.log(update);
   console.log("router put working");
-  Task.updateTask(req.params._id,update,function(err,task){
-       if(err) throw err;
-       res.json(task);
-   });
- });
+  Task.updateTask(req.params._id, update, function (err, task) {
+    if (err) throw err;
+    res.json(task);
+  });
+});
 //DELETE ROUTE
 router.delete("/:id", function (req, res) {
   Task.findByIdAndRemove(req.params.id, function (err) {
@@ -367,7 +455,7 @@ router.get('/find/:_id', function (req, res) {
       console.log(err);
     }
     else {
-        console.log("In find route " + tasks);
+      console.log("In find route " + tasks);
       return res.json(tasks);
       // res.json({tasks: tasks});
     }
@@ -375,26 +463,26 @@ router.get('/find/:_id', function (req, res) {
 });
 
 
-var GoogleStrategy = require( 'passport-google-oauth2' ).Strategy;
-  // used to serialize the user for the session
-  passport.serializeUser(function (user, done) {
-    console.log("in serializeUser user");
-    done(null, user.id);
+var GoogleStrategy = require('passport-google-oauth2').Strategy;
+// used to serialize the user for the session
+passport.serializeUser(function (user, done) {
+  console.log("in serializeUser user");
+  done(null, user.id);
+});
+// used to deserialize the user
+passport.deserializeUser(function (id, done) {
+  User.findById(id, function (err, user) {
+    console.log("In deserialize user");
+    done(err, user);
   });
-  // used to deserialize the user
-  passport.deserializeUser(function(id, done) {
-    User.findById(id, function(err, user) {
-      console.log("In deserialize user");
-        done(err, user);
-    });
-  });
+});
 passport.use(new GoogleStrategy({
-    clientID:  '253236158197-v3t0oaav0op4fsq2qorqhv8jmaj1ante.apps.googleusercontent.com'  ,
-    clientSecret: 'Dzz4NAKNVW5W7fWux4BPvRbQ',
-    callbackURL: "http://localhost:8080/user/auth/google/callback",
-    passReqToCallback   : true
-  },
-  function(request, accessToken, refreshToken, profile, done) { 
+  clientID: '253236158197-v3t0oaav0op4fsq2qorqhv8jmaj1ante.apps.googleusercontent.com',
+  clientSecret: 'Dzz4NAKNVW5W7fWux4BPvRbQ',
+  callbackURL: "http://localhost:8080/user/auth/google/callback",
+  passReqToCallback: true
+},
+  function (request, accessToken, refreshToken, profile, done) {
     // console.log(profile);
     console.log(profile.id);
     God.findOne({
@@ -415,7 +503,7 @@ passport.use(new GoogleStrategy({
         user.save(function (err) {
           if (err) console.log(err);
           console.log("save");
-         // return 
+          // return 
           done(null, user);
         });
       } else {
@@ -428,13 +516,40 @@ passport.use(new GoogleStrategy({
     });
   }
 ));
-router.get('/auth/google',passport.authenticate('google',
-{scope: [ 'https://www.googleapis.com/auth/plus.login',
- 'https://www.googleapis.com/auth/plus.profile.emails.read' ]}));
-router.get( '/auth/google/callback', 
-    passport.authenticate( 'google', { 
-        successRedirect: 'http://localhost:4200/dashboard',
-        failureRedirect: 'http://localhost:4200/login'
-}));
+router.get('/auth/google', passport.authenticate('google',
+  {
+    scope: ['https://www.googleapis.com/auth/plus.login',
+      'https://www.googleapis.com/auth/plus.profile.emails.read']
+  }));
+router.get('/auth/google/callback',
+  passport.authenticate('google', {
+    successRedirect: 'http://localhost:4200/dashboard',
+    failureRedirect: 'http://localhost:4200/login'
+  }));
+
+
+
+// router.get('/showtask/:id', function (req, res) {
+//   console.log("atleast");
+//   var query = req.params.id;
+
+//   // var query =new RegExp( search)
+//   console.log("query===", query)
+//   Task.find({
+//     "$or": [
+//       { taskName: { '$regex': query } },
+//       { taskClientName: { '$regex': query } },
+//       { taskDesc: { '$regex': query } }
+//     ]
+//   }, function (err, data) {
+//     console.log("data " + JSON.stringify(data));
+
+//     return res.json(data);
+
+//     console.log("search detail");
+//   });
+// })
+
+
 module.exports = router;
 

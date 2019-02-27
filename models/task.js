@@ -40,9 +40,15 @@ module.exports.addTask= function(newTask, callback)
 }
 
 
+// module.exports.getTask = function(query,callback){
+//    // console.log(query);
+//     Task.find(query,{},callback);
+   
+// }
+
 module.exports.getTask = function(callback){
-    Task.find(callback);
-}
+     Task.find(callback);
+ }
 
 module.exports.updateTask = function(id, newTask, callback){
     Task.findByIdAndUpdate(id, newTask, callback);
